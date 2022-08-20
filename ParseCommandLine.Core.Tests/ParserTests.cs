@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using Xunit;
 
 namespace ParseCommandLine.Core.Tests;
@@ -65,6 +66,24 @@ public class ParserTests
         Assert.Equal(2, result.Count);
         Assert.True(result.Arg<bool>("arg1"));
         Assert.Equal(42, result.Arg<int>("arg2"));
+    }
+
+    [Fact]
+    public void ParseJson()
+    {
+        var parsed = _parser.Parse("-arg1=\"{\\\"flag\\\": true,\\\"body\\\":\\\"This is the body\\\"}\"");
+
+        var result = parsed.Arg<TestClass>("arg1")!;
+        Assert.True(result.Flag);
+        Assert.Equal("This is the body", result.Body);
+    }
+
+    private class TestClass
+    {
+        [JsonPropertyName("flag")]
+        public bool Flag { get; set; }
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
     }
 
     [Theory]
