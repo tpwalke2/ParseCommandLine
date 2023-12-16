@@ -2,9 +2,9 @@
 
 namespace ParseCommandLine.Core;
 
-public class Parser : IParser
+public static class Parser
 {
-    public ParseResult Parse(string arguments)
+    public static ParseResult Parse(string arguments)
     {
         return new ParseResult(
             DoParse(

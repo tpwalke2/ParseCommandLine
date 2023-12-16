@@ -6,17 +6,10 @@ namespace ParseCommandLine.Core.Tests;
 
 public class ParserTests
 {
-    private readonly Parser _parser;
-
-    public ParserTests()
-    {
-        _parser = new Parser();
-    }
-    
     [Fact]
     public void ParseOneArgument_BooleanFlag()
     {
-        var result = _parser.Parse("-arg1");
+        var result = Parser.Parse("-arg1");
 
         Assert.Equal(1, result.Count);
         Assert.True(result.Arg<bool>("arg1"));
@@ -25,7 +18,7 @@ public class ParserTests
     [Fact]
     public void ParseOneArgument_Int()
     {
-        var result = _parser.Parse("-arg1=42");
+        var result = Parser.Parse("-arg1=42");
 
         Assert.Equal(1, result.Count);
         Assert.Equal(42, result.Arg<int>("arg1"));
@@ -34,7 +27,7 @@ public class ParserTests
     [Fact]
     public void ParseOneArgument_String()
     {
-        var result = _parser.Parse("-arg1=\"Hello World!\"");
+        var result = Parser.Parse("-arg1=\"Hello World!\"");
 
         Assert.Equal(1, result.Count);
         Assert.Equal("Hello World!", result.Arg<string>("arg1"));
@@ -43,7 +36,7 @@ public class ParserTests
     [Fact]
     public void ParseOneArgument_StringWithEscapedEscape()
     {
-        var result = _parser.Parse("-arg1=\"2 \\\\ 1 = 1\"");
+        var result = Parser.Parse("-arg1=\"2 \\\\ 1 = 1\"");
 
         Assert.Equal(1, result.Count);
         Assert.Equal(@"2 \ 1 = 1", result.Arg<string>("arg1"));
@@ -52,16 +45,16 @@ public class ParserTests
     [Fact]
     public void ParseOneArgument_StringWithEscapedDoubleQuote()
     {
-        var result = _parser.Parse("-arg1=\"Hello \\\"World\\\"!\"");
+        var result = Parser.Parse("-arg1=\"Hello \\\"World\\\"!\"");
 
         Assert.Equal(1, result.Count);
-        Assert.Equal(@"Hello ""World""!", result.Arg<string>("arg1"));
+        Assert.Equal("""Hello "World"!""", result.Arg<string>("arg1"));
     }
     
     [Fact]
     public void ParseTwoArguments()
     {
-        var result = _parser.Parse("-arg1 -arg2=42");
+        var result = Parser.Parse("-arg1 -arg2=42");
 
         Assert.Equal(2, result.Count);
         Assert.True(result.Arg<bool>("arg1"));
@@ -71,7 +64,7 @@ public class ParserTests
     [Fact]
     public void ParseJson()
     {
-        var parsed = _parser.Parse("-arg1=\"{\\\"flag\\\": true,\\\"body\\\":\\\"This is the body\\\"}\"");
+        var parsed = Parser.Parse("-arg1=\"{\\\"flag\\\": true,\\\"body\\\":\\\"This is the body\\\"}\"");
 
         var result = parsed.Arg<TestClass>("arg1")!;
         Assert.True(result.Flag);
@@ -94,9 +87,11 @@ public class ParserTests
     [InlineData("-arg1= -arg2")]
     [InlineData(@"-arg1=""Hi -arg2")]
     [InlineData(@"-arg1=42"" -arg2")]
-    [InlineData(@"-arg1=""Hi \ hi""")]
+    [InlineData("""
+                -arg1="Hi \ hi"
+                """)]
     public void ParseErrors(string commandLine)
     {
-        Assert.Throws<FormatException>(() => _parser.Parse(commandLine));
+        Assert.Throws<FormatException>(() => Parser.Parse(commandLine));
     }
 }
