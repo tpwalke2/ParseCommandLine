@@ -4,19 +4,25 @@ using ParseCommandLine.Core.Serialization;
 
 namespace ParseCommandLine.Core;
 
-public class ParseResult
+public class ParseResult(IEnumerable<KeyValuePair<string, string>> values)
 {
-    private readonly IDictionary<string, string> _values;
-
-    public ParseResult(IEnumerable<KeyValuePair<string, string>> values)
-    {
-        _values = new Dictionary<string, string>(values, StringComparer.OrdinalIgnoreCase);
-    }
+    private readonly IDictionary<string, string> _values = new Dictionary<string, string>(values, StringComparer.OrdinalIgnoreCase);
 
     public int Count => _values.Count;
-    
+
     public T? Arg<T>(string key)
     {
+        T? ConvertType(Type type) => (T?)TypeDescriptor
+                                         .GetConverter(type)
+                                         .ConvertFrom(_values.TryGetOrDefault(key, "")!);
+
+        var t = typeof(T);
+
+        if (t.IsPrimitive || t == typeof(string))
+        {
+            return ConvertType(t);
+        }
+
         try
         {
             return Json.Deserialize<T>(_values.TryGetOrDefault(key, "")!);
@@ -24,13 +30,7 @@ public class ParseResult
         catch (Exception)
         {
             // fallback to type conversion
-            var result = TypeDescriptor
-                         .GetConverter(typeof(T))
-                         .ConvertFrom(_values.TryGetOrDefault(key, "")!);
-
-            return result == null
-                ? default
-                : (T?)result;
+            return ConvertType(t) ?? default;
         }
     }
 }

@@ -4,13 +4,12 @@ namespace ParseCommandLine.Core;
 
 public static class Parser
 {
-    public static ParseResult Parse(string arguments)
-    {
-        return new ParseResult(
+    public static ParseResult Parse(string arguments) => new(
             DoParse(
                 arguments,
                 new Context()));
-    }
+
+    public static ParseResult Parse(string[] arguments) => Parse(String.Join(' ', arguments));
 
     private static IEnumerable<KeyValuePair<string, string>> DoParse(
         string input,

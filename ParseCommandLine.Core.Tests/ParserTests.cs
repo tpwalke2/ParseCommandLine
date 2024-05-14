@@ -94,4 +94,14 @@ public class ParserTests
     {
         Assert.Throws<FormatException>(() => Parser.Parse(commandLine));
     }
+    
+    [Fact]
+    public void ParseArrayTwoArguments()
+    {
+        var result = Parser.Parse(["-arg1", "-arg2=42"]);
+
+        Assert.Equal(2, result.Count);
+        Assert.True(result.Arg<bool>("arg1"));
+        Assert.Equal(42, result.Arg<int>("arg2"));
+    }
 }
