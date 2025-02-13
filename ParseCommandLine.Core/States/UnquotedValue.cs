@@ -1,8 +1,8 @@
 ﻿namespace ParseCommandLine.Core.States;
 
-internal class UnquotedValue : BaseState
+internal class UnquotedValue : IState
 {
-    public override IState Process(char ch, Context context)
+    public IState Process(char ch, Context context)
     {
         context.CurrentIndex++;
 

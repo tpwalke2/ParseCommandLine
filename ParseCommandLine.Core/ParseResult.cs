@@ -6,7 +6,7 @@ namespace ParseCommandLine.Core;
 
 public class ParseResult(IEnumerable<KeyValuePair<string, string>> values)
 {
-    private readonly IDictionary<string, string> _values = new Dictionary<string, string>(values, StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _values = new(values, StringComparer.OrdinalIgnoreCase);
 
     public int Count => _values.Count;
 
