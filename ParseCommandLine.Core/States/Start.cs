@@ -1,8 +1,8 @@
 ﻿namespace ParseCommandLine.Core.States;
 
-internal class Start : BaseState
+internal class Start : IState
 {
-    public override IState Process(char ch, Context context)
+    public IState Process(char ch, Context context)
     {
         context.CurrentIndex++;
         

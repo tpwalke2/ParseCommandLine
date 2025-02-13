@@ -9,7 +9,7 @@ public static class Parser
                 arguments,
                 new Context()));
 
-    public static ParseResult Parse(string[] arguments) => Parse(String.Join(' ', arguments));
+    public static ParseResult Parse(string[] arguments) => Parse(string.Join(' ', arguments));
 
     private static IEnumerable<KeyValuePair<string, string>> DoParse(
         string input,
@@ -27,7 +27,7 @@ public static class Parser
 
         if (finalState != ParseStates.PotentialEndQuotedValue && finalState != ParseStates.UnquotedValue)
         {
-            ParseStates.Error.Process(default, context);
+            ParseStates.Error.Process('\0', context);
         }
 
         context.AddValue();

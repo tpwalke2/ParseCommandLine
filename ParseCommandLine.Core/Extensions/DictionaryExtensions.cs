@@ -7,7 +7,7 @@ public static class DictionaryExtensions
         TKey key,
         TValue? defaultValue = default)
     {
-        if (key == null) return defaultValue;
+        if (Equals(key, null)) return defaultValue;
 
         return dictionary.TryGetValue(key, out var result) ? result : defaultValue;
     }
